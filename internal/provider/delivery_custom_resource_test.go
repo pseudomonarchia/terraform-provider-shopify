@@ -16,23 +16,23 @@ func TestAccDeliveryCustomResource(t *testing.T) {
 			{
 				Config: testAccDeliveryCustomResourceConfig("test_delivery", true),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_delivery.test", "title", "test_delivery"),
-					resource.TestCheckResourceAttr("sfr_delivery.test", "enabled", "true"),
-					resource.TestCheckResourceAttrSet("sfr_delivery.test", "id"),
-					resource.TestCheckResourceAttrSet("sfr_delivery.test", "function_id"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "test_delivery"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "enabled", "true"),
+					resource.TestCheckResourceAttrSet("shopify_delivery.test", "id"),
+					resource.TestCheckResourceAttrSet("shopify_delivery.test", "function_id"),
 				),
 			},
 			// 更新測試
 			{
 				Config: testAccDeliveryCustomResourceConfig("updated_delivery", false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_delivery.test", "title", "updated_delivery"),
-					resource.TestCheckResourceAttr("sfr_delivery.test", "enabled", "false"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "updated_delivery"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "enabled", "false"),
 				),
 			},
 			// 導入測試
 			{
-				ResourceName:      "sfr_delivery.test",
+				ResourceName:      "shopify_delivery.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccDeliveryCustomResourceImportStateIdFunc,
@@ -44,7 +44,7 @@ func TestAccDeliveryCustomResource(t *testing.T) {
 func testAccDeliveryCustomResourceConfig(title string, enabled bool) string {
 	return fmt.Sprintf(
 		`
-			resource "sfr_delivery" "test" {
+			resource "shopify_delivery" "test" {
 				function_id = "00000000-0000-0000-0000-000000000000"
 				title       = %q
 				enabled     = %t
@@ -56,9 +56,9 @@ func testAccDeliveryCustomResourceConfig(title string, enabled bool) string {
 }
 
 func testAccDeliveryCustomResourceImportStateIdFunc(s *terraform.State) (string, error) {
-	rs, ok := s.RootModule().Resources["sfr_delivery.test"]
+	rs, ok := s.RootModule().Resources["shopify_delivery.test"]
 	if !ok {
-		return "", fmt.Errorf("Resource not found: sfr_delivery.test")
+		return "", fmt.Errorf("Resource not found: shopify_delivery.test")
 	}
 
 	return fmt.Sprintf("%s,%s", rs.Primary.ID, rs.Primary.Attributes["function_id"]), nil

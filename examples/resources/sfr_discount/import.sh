@@ -1,1 +1,1 @@
-terraform import sfr_discount.example <discount_id>,<function_id>
+terraform import shopify_discount.example <discount_id>,<function_id>

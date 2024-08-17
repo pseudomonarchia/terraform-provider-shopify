@@ -5,7 +5,7 @@ import (
 	"flag"
 	"log"
 
-	"shopify-function-registry/internal/provider"
+	"github.com/pseudomonarchia/terraform-provider-shopify/internal/provider"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
@@ -18,7 +18,7 @@ import (
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
 // can be customized.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name sfr
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name shopify
 
 var version = "0.0.1"
 
@@ -29,7 +29,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/pseudomonarchia/shopify-function-registry",
+		Address: "registry.terraform.io/pseudomonarchia/terraform-provider-shopify",
 		Debug:   debug,
 	}
 

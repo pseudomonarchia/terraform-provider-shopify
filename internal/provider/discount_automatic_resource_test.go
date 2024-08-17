@@ -21,31 +21,31 @@ func TestAccDiscountAutomaticResource(t *testing.T) {
 			{
 				Config: testAccDiscountAutomaticResourceConfig(startTime, endTime, true, false, true, false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_discount.test", "title", "test_discount"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "starts_at", startTime),
-					resource.TestCheckResourceAttr("sfr_discount.test", "ends_at", endTime),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.order_discounts", "true"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.product_discounts", "false"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.shipping_discounts", "true"),
-					resource.TestCheckResourceAttrSet("sfr_discount.test", "id"),
-					resource.TestCheckResourceAttrSet("sfr_discount.test", "function_id"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "title", "test_discount"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "starts_at", startTime),
+					resource.TestCheckResourceAttr("shopify_discount.test", "ends_at", endTime),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.order_discounts", "true"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.product_discounts", "false"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.shipping_discounts", "true"),
+					resource.TestCheckResourceAttrSet("shopify_discount.test", "id"),
+					resource.TestCheckResourceAttrSet("shopify_discount.test", "function_id"),
 				),
 			},
 			// 更新測試
 			{
 				Config: testAccDiscountAutomaticResourceConfig(updatedStartTime, "", false, true, false, true),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_discount.test", "title", "updated_discount"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "starts_at", updatedStartTime),
-					resource.TestCheckResourceAttr("sfr_discount.test", "ends_at", ""),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.order_discounts", "false"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.product_discounts", "true"),
-					resource.TestCheckResourceAttr("sfr_discount.test", "combines_with.shipping_discounts", "false"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "title", "updated_discount"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "starts_at", updatedStartTime),
+					resource.TestCheckResourceAttr("shopify_discount.test", "ends_at", ""),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.order_discounts", "false"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.product_discounts", "true"),
+					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.shipping_discounts", "false"),
 				),
 			},
 			// 導入測試
 			{
-				ResourceName:      "sfr_discount.test",
+				ResourceName:      "shopify_discount.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccDiscountAutomaticResourceImportStateIdFunc,
@@ -67,7 +67,7 @@ func testAccDiscountAutomaticResourceConfig(startsAt, endsAt string, orderDiscou
 
 	return fmt.Sprintf(
 		`
-			resource "sfr_discount" "test" {
+			resource "shopify_discount" "test" {
 				function_id = "00000000-0000-0000-0000-000000000000"
 				title       = %q
 				starts_at   = %q
@@ -89,9 +89,9 @@ func testAccDiscountAutomaticResourceConfig(startsAt, endsAt string, orderDiscou
 }
 
 func testAccDiscountAutomaticResourceImportStateIdFunc(s *terraform.State) (string, error) {
-	rs, ok := s.RootModule().Resources["sfr_discount.test"]
+	rs, ok := s.RootModule().Resources["shopify_discount.test"]
 	if !ok {
-		return "", fmt.Errorf("Resource not found: sfr_discount.test")
+		return "", fmt.Errorf("Resource not found: shopify_discount.test")
 	}
 
 	return fmt.Sprintf("%s,%s", rs.Primary.ID, rs.Primary.Attributes["function_id"]), nil

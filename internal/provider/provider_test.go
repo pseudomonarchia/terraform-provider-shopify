@@ -10,7 +10,7 @@ import (
 )
 
 var testAccProtoV6ProviderFactories = map[string]func() (tfprotov6.ProviderServer, error){
-	"sfr": providerserver.NewProtocol6WithError(New("test")()),
+	"shopify": providerserver.NewProtocol6WithError(New("test")()),
 }
 
 func TestAccProvider(t *testing.T) {
@@ -19,7 +19,7 @@ func TestAccProvider(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: `
-					provider "sfr" {
+					provider "shopify" {
 						store_domain       = "example.myshopify.com"
 						store_access_token = "test_token"
 						store_api_version  = "2024-01"
@@ -36,7 +36,7 @@ func TestAccProviderInvalidDomain(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: `
-					provider "sfr" {
+					provider "shopify" {
 						store_domain       = "invalid-domain"
 						store_access_token = "test_token"
 						store_api_version  = "2024-01"
@@ -54,7 +54,7 @@ func TestAccProviderInvalidAPIVersion(t *testing.T) {
 		Steps: []resource.TestStep{
 			{
 				Config: `
-					provider "sfr" {
+					provider "shopify" {
 						store_domain       = "example.myshopify.com"
 						store_access_token = "test_token"
 						store_api_version  = "invalid-version"

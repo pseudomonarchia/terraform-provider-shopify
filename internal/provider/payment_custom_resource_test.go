@@ -16,23 +16,23 @@ func TestAccPaymentCustomResource(t *testing.T) {
 			{
 				Config: testAccPaymentCustomResourceConfig("test_payment", true),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_payment.test", "title", "test_payment"),
-					resource.TestCheckResourceAttr("sfr_payment.test", "enabled", "true"),
-					resource.TestCheckResourceAttrSet("sfr_payment.test", "id"),
-					resource.TestCheckResourceAttrSet("sfr_payment.test", "function_id"),
+					resource.TestCheckResourceAttr("shopify_payment.test", "title", "test_payment"),
+					resource.TestCheckResourceAttr("shopify_payment.test", "enabled", "true"),
+					resource.TestCheckResourceAttrSet("shopify_payment.test", "id"),
+					resource.TestCheckResourceAttrSet("shopify_payment.test", "function_id"),
 				),
 			},
 			// 更新測試
 			{
 				Config: testAccPaymentCustomResourceConfig("updated_payment", false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("sfr_payment.test", "title", "updated_payment"),
-					resource.TestCheckResourceAttr("sfr_payment.test", "enabled", "false"),
+					resource.TestCheckResourceAttr("shopify_payment.test", "title", "updated_payment"),
+					resource.TestCheckResourceAttr("shopify_payment.test", "enabled", "false"),
 				),
 			},
 			// 導入測試
 			{
-				ResourceName:      "sfr_payment.test",
+				ResourceName:      "shopify_payment.test",
 				ImportState:       true,
 				ImportStateVerify: true,
 				ImportStateIdFunc: testAccPaymentCustomResourceImportStateIdFunc,
@@ -44,7 +44,7 @@ func TestAccPaymentCustomResource(t *testing.T) {
 func testAccPaymentCustomResourceConfig(title string, enabled bool) string {
 	return fmt.Sprintf(
 		`
-			resource "sfr_payment" "test" {
+			resource "shopify_payment" "test" {
 				function_id = "00000000-0000-0000-0000-000000000000"
 				title       = %q
 				enabled     = %t
@@ -56,9 +56,9 @@ func testAccPaymentCustomResourceConfig(title string, enabled bool) string {
 }
 
 func testAccPaymentCustomResourceImportStateIdFunc(s *terraform.State) (string, error) {
-	rs, ok := s.RootModule().Resources["sfr_payment.test"]
+	rs, ok := s.RootModule().Resources["shopify_payment.test"]
 	if !ok {
-		return "", fmt.Errorf("Resource not found: sfr_payment.test")
+		return "", fmt.Errorf("Resource not found: shopify_payment.test")
 	}
 
 	return fmt.Sprintf("%s,%s", rs.Primary.ID, rs.Primary.Attributes["function_id"]), nil

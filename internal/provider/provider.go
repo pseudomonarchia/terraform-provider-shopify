@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"regexp"
-	"shopify-function-registry/internal/shopify"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -12,6 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/pseudomonarchia/terraform-provider-shopify/internal/shopify"
 )
 
 var _ provider.Provider = (*funcProvider)(nil)
@@ -39,7 +39,7 @@ func (p *funcProvider) Metadata(
 	_ provider.MetadataRequest,
 	resp *provider.MetadataResponse,
 ) {
-	resp.TypeName = "sfr"
+	resp.TypeName = "shopify"
 	resp.Version = p.version
 }
 

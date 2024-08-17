@@ -1,4 +1,4 @@
-module shopify-function-registry
+module github.com/pseudomonarchia/terraform-provider-shopify
 
 go 1.22.6
 

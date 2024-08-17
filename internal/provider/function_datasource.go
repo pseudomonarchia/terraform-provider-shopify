@@ -3,7 +3,6 @@ package provider
 import (
 	"context"
 	"fmt"
-	"shopify-function-registry/internal/shopify"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -11,6 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/schema/validator"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
+	"github.com/pseudomonarchia/terraform-provider-shopify/internal/shopify"
 )
 
 var _ datasource.DataSource = &FunctinDataSource{}

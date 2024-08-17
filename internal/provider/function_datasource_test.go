@@ -15,10 +15,10 @@ func TestAccFunctionDataSource(t *testing.T) {
 			{
 				Config: testAccFunctionDataSourceConfig(),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttrSet("data.sfr_function.test", "id"),
-					resource.TestCheckResourceAttr("data.sfr_function.test", "title", "test_function"),
-					resource.TestCheckResourceAttr("data.sfr_function.test", "app_title", "test_app"),
-					resource.TestCheckResourceAttrSet("data.sfr_function.test", "api_type"),
+					resource.TestCheckResourceAttrSet("data.shopify_function.test", "id"),
+					resource.TestCheckResourceAttr("data.shopify_function.test", "title", "test_function"),
+					resource.TestCheckResourceAttr("data.shopify_function.test", "app_title", "test_app"),
+					resource.TestCheckResourceAttrSet("data.shopify_function.test", "api_type"),
 				),
 			},
 		},
@@ -27,7 +27,7 @@ func TestAccFunctionDataSource(t *testing.T) {
 
 func testAccFunctionDataSourceConfig() string {
 	return `
-		data "sfr_function" "test" {
+		data "shopify_function" "test" {
 			title     = "test_function"
 			app_title = "test_app"
 		}
@@ -48,7 +48,7 @@ func TestAccFunctionDataSource_NotFound(t *testing.T) {
 
 func testAccFunctionDataSourceConfig_NotFound() string {
 	return `
-		data "sfr_function" "test" {
+		data "shopify_function" "test" {
 			title     = "non_existent_function"
 			app_title = "non_existent_app"
 		}
