@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -34,38 +33,72 @@ func TestNew(t *testing.T) {
 }
 
 func TestExec(t *testing.T) {
-	os.Setenv("SHOPIFY_TEST_MODE", "true")
+	t.Run("Successful execution", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			assert.Equal(t, "POST", r.Method)
+			assert.Equal(t, "/admin/api/2023-04/graphql.json", r.URL.Path)
+			assert.Equal(t, "access_token", r.Header.Get("X-Shopify-Access-Token"))
+			assert.Equal(t, "no-cache", r.Header.Get("Cache-Control"))
 
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		assert.Equal(t, "POST", r.Method)
-		assert.Equal(t, "/admin/api/2023-04/graphql.json", r.URL.Path)
-		assert.Equal(t, "access_token", r.Header.Get("X-Shopify-Access-Token"))
-		assert.Equal(t, "no-cache", r.Header.Get("Cache-Control"))
+			w.Header().Set("Content-Type", "application/json")
+			_, err := w.Write([]byte(`{"data": {"test": "success"}}`))
+			if err != nil {
+				t.Errorf("Error writing response: %v", err)
+			}
+		}))
 
-		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(`{"data": {"test": "success"}}`))
-	}))
+		defer server.Close()
+		client := &ShopifyAdminClinetImpl{
+			storeDomain:      server.URL[7:], // 移除 "http://"
+			storeAccessToken: "access_token",
+			storeApiVersion:  "2023-04",
+			local:            true,
+		}
 
-	defer server.Close()
-	client := &ShopifyAdminClinetImpl{
-		storeDomain:      server.URL[7:], // 移除 "http://"
-		storeAccessToken: "access_token",
-		storeApiVersion:  "2023-04",
-		local:            true,
-	}
+		ctx := context.Background()
+		query := `query { test }`
 
-	ctx := context.Background()
-	query := `query { test }`
+		result, err := client.exec(ctx, query)
 
-	result, err := client.exec(ctx, query)
+		assert.NoError(t, err)
+		assert.NotNil(t, result)
 
-	assert.NoError(t, err)
-	assert.NotNil(t, result)
+		expectedResult := map[string]interface{}{
+			"test": "success",
+		}
 
-	expectedResult := map[string]interface{}{
-		"test": "success",
-	}
+		assert.Equal(t, expectedResult, result)
+	})
 
-	assert.Equal(t, expectedResult, result)
-	os.Unsetenv("SHOPIFY_TEST_MODE")
+	t.Run("Error execution - HTTP error", func(t *testing.T) {
+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.WriteHeader(http.StatusInternalServerError)
+		}))
+		defer server.Close()
+
+		client := &ShopifyAdminClinetImpl{
+			storeDomain:      server.URL[7:],
+			storeAccessToken: "test-token",
+			storeApiVersion:  "2023-04",
+		}
+
+		result, err := client.exec(context.Background(), "query { test }")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+
+	t.Run("Error execution - Network error", func(t *testing.T) {
+		client := &ShopifyAdminClinetImpl{
+			storeDomain:      "nonexistent.domain",
+			storeAccessToken: "test-token",
+			storeApiVersion:  "2023-04",
+		}
+
+		result, err := client.exec(context.Background(), "query { test }")
+
+		assert.Error(t, err)
+		assert.Equal(t, "", result)
+	})
+
 }
