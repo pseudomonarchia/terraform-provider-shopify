@@ -1,6 +1,7 @@
-name: Go Test
+name: Go Test & Terraform Provider Test
 
 on:
+  workflow_call:
   push:
     branches: [ master ]
   pull_request:
