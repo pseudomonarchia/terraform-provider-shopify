@@ -26,5 +26,13 @@ jobs:
       - name: Install dependencies
         run: go mod download
 
-      - name: Run tests
+      - name: Run unit tests
         run: go test -v ./...
+
+      - name: Run Terraform provider tests
+        run: go test -v ./...
+        env:
+          TF_ACC: 1
+          SHOPIFY_STORE_DOMAIN: ${{ secrets.SHOPIFY_STORE_DOMAIN }}
+          SHOPIFY_STORE_ACCESS_TOKEN: ${{ secrets.SHOPIFY_STORE_ACCESS_TOKEN }}
+          SHOPIFY_STORE_API_VERSION: ${{ secrets.SHOPIFY_STORE_API_VERSION }}
