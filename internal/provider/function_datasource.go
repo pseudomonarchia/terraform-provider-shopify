@@ -116,6 +116,7 @@ func (d *FunctinDataSource) Read(
 	for _, node := range q.Nodes {
 		if node.APPName == data.APPName.ValueString() && node.Title == data.Title.ValueString() {
 			data.ID = types.StringValue(node.ID)
+			data.APIType = types.StringValue(node.APIType)
 			break
 		}
 	}

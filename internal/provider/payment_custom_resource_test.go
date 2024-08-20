@@ -12,7 +12,6 @@ func TestAccPaymentCustomResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// 創建並讀取測試
 			{
 				Config: testAccPaymentCustomResourceConfig("test_payment", true),
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -22,7 +21,6 @@ func TestAccPaymentCustomResource(t *testing.T) {
 					resource.TestCheckResourceAttrSet("shopify_payment.test", "function_id"),
 				),
 			},
-			// 更新測試
 			{
 				Config: testAccPaymentCustomResourceConfig("updated_payment", false),
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -30,7 +28,6 @@ func TestAccPaymentCustomResource(t *testing.T) {
 					resource.TestCheckResourceAttr("shopify_payment.test", "enabled", "false"),
 				),
 			},
-			// 導入測試
 			{
 				ResourceName:      "shopify_payment.test",
 				ImportState:       true,
@@ -45,7 +42,7 @@ func testAccPaymentCustomResourceConfig(title string, enabled bool) string {
 	return fmt.Sprintf(
 		`
 			resource "shopify_payment" "test" {
-				function_id = "00000000-0000-0000-0000-000000000000"
+				function_id = "f2e906be-a93a-48c6-a2cc-99c64e5ab816"
 				title       = %q
 				enabled     = %t
 			}

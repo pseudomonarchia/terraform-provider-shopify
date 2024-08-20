@@ -12,25 +12,22 @@ func TestAccDeliveryCustomResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// 創建並讀取測試
 			{
-				Config: testAccDeliveryCustomResourceConfig("test_delivery", true),
+				Config: testAccDeliveryCustomResourceConfig("create-test", true),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "test_delivery"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "create-test"),
 					resource.TestCheckResourceAttr("shopify_delivery.test", "enabled", "true"),
 					resource.TestCheckResourceAttrSet("shopify_delivery.test", "id"),
 					resource.TestCheckResourceAttrSet("shopify_delivery.test", "function_id"),
 				),
 			},
-			// 更新測試
 			{
-				Config: testAccDeliveryCustomResourceConfig("updated_delivery", false),
+				Config: testAccDeliveryCustomResourceConfig("update-test", false),
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "updated_delivery"),
+					resource.TestCheckResourceAttr("shopify_delivery.test", "title", "update-test"),
 					resource.TestCheckResourceAttr("shopify_delivery.test", "enabled", "false"),
 				),
 			},
-			// 導入測試
 			{
 				ResourceName:      "shopify_delivery.test",
 				ImportState:       true,
@@ -45,8 +42,8 @@ func testAccDeliveryCustomResourceConfig(title string, enabled bool) string {
 	return fmt.Sprintf(
 		`
 			resource "shopify_delivery" "test" {
-				function_id = "00000000-0000-0000-0000-000000000000"
-				title       = %q
+				function_id = "3a2c6a43-6ac1-4d4d-bbd9-59286cc33740"
+				title       = "%s"
 				enabled     = %t
 			}
 		`,

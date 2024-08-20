@@ -27,11 +27,4 @@ jobs:
         run: go mod download
 
       - name: Run tests
-        run: go test -v ./... -json > test-report.json
-
-      - name: Upload test report
-        if: github.event_name != 'pull_request' && !env.ACT
-        uses: actions/upload-artifact@v3
-        with:
-          name: test-report
-          path: test-report.json
+        run: go test -v ./...

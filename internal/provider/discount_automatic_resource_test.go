@@ -17,13 +17,11 @@ func TestAccDiscountAutomaticResource(t *testing.T) {
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
-			// 創建並讀取測試
 			{
-				Config: testAccDiscountAutomaticResourceConfig(startTime, endTime, true, false, true, false),
+				Config: testAccDiscountAutomaticResourceConfig(startTime, "", true, false, true, false),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("shopify_discount.test", "title", "test_discount"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "starts_at", startTime),
-					resource.TestCheckResourceAttr("shopify_discount.test", "ends_at", endTime),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.order_discounts", "true"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.product_discounts", "false"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.shipping_discounts", "true"),
@@ -31,19 +29,17 @@ func TestAccDiscountAutomaticResource(t *testing.T) {
 					resource.TestCheckResourceAttrSet("shopify_discount.test", "function_id"),
 				),
 			},
-			// 更新測試
 			{
-				Config: testAccDiscountAutomaticResourceConfig(updatedStartTime, "", false, true, false, true),
+				Config: testAccDiscountAutomaticResourceConfig(updatedStartTime, endTime, false, true, false, true),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttr("shopify_discount.test", "title", "updated_discount"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "starts_at", updatedStartTime),
-					resource.TestCheckResourceAttr("shopify_discount.test", "ends_at", ""),
+					resource.TestCheckResourceAttr("shopify_discount.test", "ends_at", endTime),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.order_discounts", "false"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.product_discounts", "true"),
 					resource.TestCheckResourceAttr("shopify_discount.test", "combines_with.shipping_discounts", "false"),
 				),
 			},
-			// 導入測試
 			{
 				ResourceName:      "shopify_discount.test",
 				ImportState:       true,
@@ -54,7 +50,14 @@ func TestAccDiscountAutomaticResource(t *testing.T) {
 	})
 }
 
-func testAccDiscountAutomaticResourceConfig(startsAt, endsAt string, orderDiscounts, productDiscounts, shippingDiscounts bool, isUpdated bool) string {
+func testAccDiscountAutomaticResourceConfig(
+	startsAt,
+	endsAt string,
+	orderDiscounts,
+	productDiscounts,
+	shippingDiscounts bool,
+	isUpdated bool,
+) string {
 	endsAtConfig := ""
 	if endsAt != "" {
 		endsAtConfig = fmt.Sprintf(`ends_at = %q`, endsAt)
@@ -68,11 +71,11 @@ func testAccDiscountAutomaticResourceConfig(startsAt, endsAt string, orderDiscou
 	return fmt.Sprintf(
 		`
 			resource "shopify_discount" "test" {
-				function_id = "00000000-0000-0000-0000-000000000000"
+				function_id = "07224386-3c16-4f9e-b8ba-da049b6afc66"
 				title       = %q
 				starts_at   = %q
 				%s
-				combines_with {
+				combines_with = {
 					order_discounts    = %t
 					product_discounts  = %t
 					shipping_discounts = %t

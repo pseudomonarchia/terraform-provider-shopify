@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"os"
 	"regexp"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/stringvalidator"
@@ -53,7 +54,7 @@ func (p *funcProvider) Schema(
 		Attributes: map[string]schema.Attribute{
 			"store_domain": schema.StringAttribute{
 				Description: "The store's URL, formatted as <storename>.myshopify.com",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`^[a-zA-Z0-9-]+\.myshopify\.com$`),
@@ -63,15 +64,15 @@ func (p *funcProvider) Schema(
 			},
 			"store_access_token": schema.StringAttribute{
 				Description: "The store's access token",
-				Required:    true,
 				Sensitive:   true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.LengthAtLeast(1),
 				},
 			},
 			"store_api_version": schema.StringAttribute{
 				Description: "The store's API version",
-				Required:    true,
+				Optional:    true,
 				Validators: []validator.String{
 					stringvalidator.RegexMatches(
 						regexp.MustCompile(`^\d{4}-\d{2}$`),
@@ -94,10 +95,38 @@ func (p *funcProvider) Configure(
 		return
 	}
 
+	storeDomain := readOrEnvDefault(conf.StoreDomain, "SHOPIFY_STORE_DOMAIN")
+	if storeDomain == "" {
+		resp.Diagnostics.AddError(
+			"Missing Shopify Store Domain",
+			"The Shopify store domain is not set and no default value is provided.",
+		)
+	}
+
+	storeAccessToken := readOrEnvDefault(conf.StoreAccessToken, "SHOPIFY_STORE_ACCESS_TOKEN")
+	if storeAccessToken == "" {
+		resp.Diagnostics.AddError(
+			"Missing Shopify Store Access Token",
+			"The Shopify store access token is not set and no default value is provided.",
+		)
+	}
+
+	storeApiVersion := readOrEnvDefault(conf.StoreApiVersion, "SHOPIFY_STORE_API_VERSION")
+	if storeApiVersion == "" {
+		resp.Diagnostics.AddError(
+			"Missing Shopify Store API Version",
+			"The Shopify store API version is not set and no default value is provided.",
+		)
+	}
+
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
 	c := shopify.New(
-		conf.StoreDomain.ValueString(),
-		conf.StoreAccessToken.ValueString(),
-		conf.StoreApiVersion.ValueString(),
+		storeDomain,
+		storeAccessToken,
+		storeApiVersion,
 	)
 
 	resp.ResourceData = c
@@ -116,4 +145,12 @@ func (p *funcProvider) Resources(_ context.Context) []func() resource.Resource {
 		NewPaymentCustomResource,
 		NewDeliveryCustomResource,
 	}
+}
+
+func readOrEnvDefault(str types.String, envVarKey string) string {
+	if !str.IsNull() {
+		return str.ValueString()
+	}
+
+	return os.Getenv(envVarKey)
 }

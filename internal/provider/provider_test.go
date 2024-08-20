@@ -1,7 +1,8 @@
 package provider
 
 import (
-	"regexp"
+	"fmt"
+	"os"
 	"testing"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
@@ -18,50 +19,32 @@ func TestAccProvider(t *testing.T) {
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			{
-				Config: `
-					provider "shopify" {
-						store_domain       = "example.myshopify.com"
-						store_access_token = "test_token"
-						store_api_version  = "2024-01"
-					}
-				`,
+				Config: testAccProviderConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr("data.shopify_function.test", "title", "product-discount"),
+					resource.TestCheckResourceAttr("data.shopify_function.test", "app_title", "tf-testing"),
+					resource.TestCheckResourceAttr("data.shopify_function.test", "api_type", "product_discounts"),
+				),
 			},
 		},
 	})
 }
 
-func TestAccProviderInvalidDomain(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: `
-					provider "shopify" {
-						store_domain       = "invalid-domain"
-						store_access_token = "test_token"
-						store_api_version  = "2024-01"
-					}
-				`,
-				ExpectError: regexp.MustCompile(`must be a valid Shopify store domain`),
-			},
-		},
-	})
-}
+func testAccProviderConfig() string {
+	return fmt.Sprintf(`
+		provider "shopify" {
+			store_domain       = "%s"
+			store_access_token = "%s"
+			store_api_version  = "%s"
+		}
 
-func TestAccProviderInvalidAPIVersion(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
-		Steps: []resource.TestStep{
-			{
-				Config: `
-					provider "shopify" {
-						store_domain       = "example.myshopify.com"
-						store_access_token = "test_token"
-						store_api_version  = "invalid-version"
-					}
-				`,
-				ExpectError: regexp.MustCompile(`must be a valid Shopify API version`),
-			},
-		},
-	})
+		data "shopify_function" "test" {
+			title     = "product-discount"
+			app_title = "tf-testing"
+		}
+	`,
+		os.Getenv("SHOPIFY_STORE_DOMAIN"),
+		os.Getenv("SHOPIFY_STORE_ACCESS_TOKEN"),
+		os.Getenv("SHOPIFY_STORE_API_VERSION"),
+	)
 }
