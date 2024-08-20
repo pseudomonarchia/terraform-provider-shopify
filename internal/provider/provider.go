@@ -144,6 +144,7 @@ func (p *funcProvider) Resources(_ context.Context) []func() resource.Resource {
 		NewDiscountAutomaticResource,
 		NewPaymentCustomResource,
 		NewDeliveryCustomResource,
+		NewPubsubWebhookResource,
 	}
 }
 

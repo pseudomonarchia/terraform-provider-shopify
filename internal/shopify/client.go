@@ -13,10 +13,11 @@ type ShopifyAdminClinetImpl struct {
 	storeApiVersion  string
 	local            bool
 
-	Discount discountService
-	Payment  paymentService
-	Function FunctionService
-	Delivery deliveryService
+	Discount      discountService
+	Payment       paymentService
+	Function      FunctionService
+	Delivery      deliveryService
+	PubsubWebhook pubsubWebhookService
 }
 
 type shopifyAdminClient interface {
@@ -38,6 +39,7 @@ func New(
 	c.Function = &FunctionServiceImpl{c}
 	c.Payment = &paymentServiceImpl{c}
 	c.Delivery = &deliveryServiceImpl{c}
+	c.PubsubWebhook = &pubsubWebhookServiceImpl{c}
 
 	return c
 }

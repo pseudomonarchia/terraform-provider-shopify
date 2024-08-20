@@ -20,7 +20,7 @@ import (
 // can be customized.
 //go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name shopify
 
-var version = "0.0.3"
+var version = "0.0.4"
 
 func main() {
 	var debug bool

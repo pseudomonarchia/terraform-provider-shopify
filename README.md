@@ -13,8 +13,8 @@ The main configuration file is `provider.tf`, which defines the settings for the
 terraform {
   required_providers {
     shopify = {
-      source  = "registry.terraform.io/pseudomonarchia/terraform-provider-shopify"
-      version = "0.0.3"
+      source  = "pseudomonarchia/terraform-provider-shopify"
+      version = "0.0.4"
     }
   }
 }
