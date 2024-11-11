@@ -177,7 +177,8 @@ func (d *discountServiceImpl) Update(
 						shippingDiscounts: %t
 					}
 				}
-			) {
+			) 
+			{
 				automaticAppDiscount {
 					discountId
 					title
@@ -189,6 +190,11 @@ func (d *discountServiceImpl) Update(
 						shippingDiscounts
 					}
 				}
+				userErrors {
+      		field
+      		message
+      		code
+    		}
 			}
 		}
 	`
